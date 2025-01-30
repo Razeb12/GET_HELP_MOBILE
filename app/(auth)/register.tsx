@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Users } from "lucide-react-native";
@@ -13,6 +8,7 @@ import Checkbox from "@/components/Checkbox";
 import { jobCategories, RegisterFormData, registerSchema } from "@/types/auth";
 import Input from "@/components/Input";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 
 export default function RegisterScreen() {
   const {
@@ -35,8 +31,12 @@ export default function RegisterScreen() {
       <ScrollView className="">
         <View className="p-6">
           <View className="items-center mb-8">
-            <View className="w-24 h-24 bg-purple-600 rounded-2xl items-center justify-center mb-6">
-              <Users size={48} color="white" />
+            <View className="w-[90%] max-h-[90px] mx-auto items-center">
+              <Image
+                source={require("../../assets/images/logo.png")}
+                className="w-36 h-36"
+                resizeMode="contain"
+              />
             </View>
             <Text className="text-3xl font-bold text-purple-900 mb-2">
               Create Account
@@ -176,9 +176,9 @@ export default function RegisterScreen() {
 
           <View className="flex-row justify-center">
             <Text className="text-gray-600 mr-1">Already have an account?</Text>
-            <TouchableOpacity>
+            <Link href="/(auth)/login">
               <Text className="text-purple-600">Login</Text>
-            </TouchableOpacity>
+            </Link>
           </View>
         </View>
       </ScrollView>

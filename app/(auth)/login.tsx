@@ -6,6 +6,7 @@ import { Users } from "lucide-react-native";
 import { LoginFormData, loginSchema } from "@/types/auth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "@/components/Input";
+import { Link } from "expo-router";
 
 export default function LoginScreen() {
   const {
@@ -21,7 +22,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white p-6">
+    <SafeAreaView className="flex-1 bg-white p-6 mt-10">
       <View className="items-center mb-8">
         <View className="w-24 h-24 bg-purple-600 rounded-2xl items-center justify-center mb-6">
           <Users size={48} color="white" />
@@ -105,9 +106,9 @@ export default function LoginScreen() {
 
       <View className="flex-row justify-center">
         <Text className="text-gray-600 mr-1">Don't have an account?</Text>
-        <TouchableOpacity>
+        <  Link  href="/register">
           <Text className="text-purple-600">Register</Text>
-        </TouchableOpacity>
+        </Link>
       </View>
     </SafeAreaView>
   );
