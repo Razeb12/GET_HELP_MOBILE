@@ -1,14 +1,16 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Users } from "lucide-react-native";
-import { LoginFormData, loginSchema } from "@/types/auth";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "@/components/Input";
-import { Link } from "expo-router";
+import LoadingOverlay from "@/components/LoadingOverlay";
+import { supabase } from "@/lib/supabase";
+import { LoginFormData, loginSchema } from "@/types/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, router } from "expo-router";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     control,
     handleSubmit,
@@ -17,16 +19,30 @@ export default function LoginScreen() {
     resolver: zodResolver(loginSchema),
   });
 
+  async function signInWithEmail(email: string, password: string) {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) Alert.alert(error.message);
+    else router.replace("/(tabs)");
+    setLoading(false);
+  }
+
   const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+    signInWithEmail(data.email, data.password);
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white p-6 mt-10">
+    <SafeAreaView className="flex-1 bg-white p-6 pt-10">
       <View className="items-center mb-8">
-        <View className="w-24 h-24 bg-purple-600 rounded-2xl items-center justify-center mb-6">
-          <Users size={48} color="white" />
-        </View>
+        <Image
+          source={require("../../assets/images/logo.png")}
+          className="w-24 h-24 mb-10"
+          resizeMode="contain"
+        />
         <Text className="text-3xl font-bold text-purple-900 mb-2">
           Welcome Back!
         </Text>
@@ -73,15 +89,18 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        className="bg-purple-900 rounded-full py-4 mb-6"
+        className={`bg-purple-900 rounded-full py-4 mb-6 ${
+          loading ? "opacity-50" : ""
+        }`}
         onPress={handleSubmit(onSubmit)}
+        disabled={loading}
       >
         <Text className="text-white text-center text-lg font-semibold">
-          Sign In
+          {loading ? "Please wait..." : "Sign In"}
         </Text>
       </TouchableOpacity>
-
-      <View className="flex-row items-center mb-6">
+      {loading && <LoadingOverlay message="Logging In" />}
+      {/* <View className="flex-row items-center mb-6">
         <View className="flex-1 h-[1px] bg-gray-300" />
         <Text className="mx-4 text-gray-500">or continue with</Text>
         <View className="flex-1 h-[1px] bg-gray-300" />
@@ -102,11 +121,11 @@ export default function LoginScreen() {
           />
           <Text className="text-gray-700">Facebook</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <View className="flex-row justify-center">
         <Text className="text-gray-600 mr-1">Don't have an account?</Text>
-        <  Link  href="/register">
+        <Link href="/register">
           <Text className="text-purple-600">Register</Text>
         </Link>
       </View>

@@ -1,16 +1,25 @@
-import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Users } from "lucide-react-native";
-import Select from "@/components/Select";
 import Checkbox from "@/components/Checkbox";
-import { jobCategories, RegisterFormData, registerSchema } from "@/types/auth";
 import Input from "@/components/Input";
+import LoadingOverlay from "@/components/LoadingOverlay";
+import Select from "@/components/Select";
+import { supabase } from "@/lib/supabase";
+import { jobCategories, RegisterFormData, registerSchema } from "@/types/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, router } from "expo-router";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
 
 export default function RegisterScreen() {
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     control,
     handleSubmit,
@@ -22,23 +31,58 @@ export default function RegisterScreen() {
     },
   });
 
+  async function signUpWithEmail(
+    email: string,
+    password: string,
+    fullName: string,
+    jobCategory: string,
+    phoneNumber: string
+  ) {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          fullName: fullName,
+          jobCategory: jobCategory,
+          phoneNumber: phoneNumber,
+        },
+      },
+    });
+
+    if (error) {
+      Alert.alert(error.message);
+    } else {
+      setLoading(false);
+      // Alert.alert("Please check your inbox for email verification!");
+      router.replace("/(tabs)");
+    }
+  }
+
   const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
+    signUpWithEmail(
+      data.email,
+      data.password,
+      data.fullName,
+      data.category,
+      data.phoneNumber
+    );
   };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView className="">
-        <View className="p-6">
+        <View className="px-6">
           <View className="items-center mb-8">
-            <View className="w-[90%] max-h-[90px] mx-auto items-center">
+            <View className="w-[90%] max-h-[90px] mx-auto items-center mb-10">
               <Image
                 source={require("../../assets/images/logo.png")}
-                className="w-36 h-36"
+                className="w-24 h-24 mt-6"
                 resizeMode="contain"
               />
             </View>
-            <Text className="text-3xl font-bold text-purple-900 mb-2">
+            <Text className="text-3xl font-bold text-purple-900 mb-2 mt-2">
               Create Account
             </Text>
             <Text className="text-gray-500 text-lg text-center">
@@ -181,6 +225,7 @@ export default function RegisterScreen() {
             </Link>
           </View>
         </View>
+        {loading && <LoadingOverlay message="Please wait..." />}
       </ScrollView>
     </SafeAreaView>
   );

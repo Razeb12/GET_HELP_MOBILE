@@ -12,7 +12,7 @@ export default function AuthLayout() {
         options={{
           headerShown: false,
           title: "Register",
-          presentation: "modal",
+          // presentation: "modal",
         }}
       />
       {/* <Stack.Screen

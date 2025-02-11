@@ -1,43 +1,57 @@
-
-import { selectSessionExpiration, selectSessionToken, store$ } from "@/store/store";
+import { supabase } from "@/lib/supabase";
+import { Session } from "@supabase/supabase-js";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 
 const Page = () => {
-  const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
   const router = useRouter();
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuthStatus = () => {
-      const session = selectSessionToken();
-      const expiration = selectSessionExpiration();
-      const currentTime = new Date().getTime();
-      if (
-        session &&
-        session !== "" &&
-        expiration > 0 &&
-        currentTime < expiration
-      ) {
-        setIsSignedIn(true);
-      } else {
-        setIsSignedIn(false);
-        store$.setSessionToken("");
-        store$.setSessionExpiration(0);
+    let isActive = true;
+
+    const checkSession = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (isActive) {
+          setSession(data.session);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error checking session:", error);
+        setIsLoading(false);
       }
     };
 
-    checkAuthStatus();
+    checkSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (isActive) {
+          setSession(session);
+          setIsLoading(false);
+        }
+      }
+    );
+
+    return () => {
+      isActive = false;
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    if (isSignedIn === true) {
-      router.replace("/(tabs)");
-    } else if (isSignedIn === false) {
-      router.replace("/(auth)/login");
+    if (!isLoading) {
+      if (session) {
+        router.replace("/(tabs)");
+      } else {
+        router.replace("/(auth)/login");
+      }
     }
-  }, [isSignedIn, router]);
+  }, [isLoading, session, router]);
 
-  return null; // No page content since redirection happens
+  return null;
 };
 
 export default Page;

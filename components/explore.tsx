@@ -1,26 +1,22 @@
-import ProfileHeader from "@/components/ProfileHeader";
+import React from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   Calendar,
-  CheckCircle,
   Home,
   Settings,
-  Star,
-  Sun,
   TrendingUp,
   Wallet,
+  CheckCircle,
+  Star,
+  Sun,
 } from "lucide-react-native";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function App() {
-
-  
+const App = () => {
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <ScrollView>
-        <ProfileHeader />
-        <ScrollView>
         {/* Header Section */}
         <View className="px-4 rounded-3xl">
           <LinearGradient
@@ -67,7 +63,7 @@ export default function App() {
               }}
             >
               <Calendar size={24} color="white" />
-              <Text style={{ color: "white", marginLeft: 12, fontSize: 16 }}>
+              <Text style={{ color: "white", marginLeft: 12, fontSize: 18 }}>
                 You have 3 tasks scheduled for today
               </Text>
             </View>
@@ -76,7 +72,7 @@ export default function App() {
 
         {/* Performance Section */}
         <View className="mt-6 px-4">
-          <Text className="text-xl font-bold mb-4">Your Performance</Text>
+          <Text className="text-2xl font-bold mb-4">Your Performance</Text>
           <View className="flex-row justify-between">
             <View className="bg-white p-4 rounded-xl flex-1 mr-2">
               <View className="flex-row items-center">
@@ -101,9 +97,9 @@ export default function App() {
         <View className="mt-6 px-4">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-xl font-bold">Today's Tasks</Text>
-            {/* <TouchableOpacity>
+            <TouchableOpacity>
               <Text className="text-blue-500 text-base">View All</Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
           </View>
 
           {/* Task Cards */}
@@ -122,7 +118,7 @@ export default function App() {
             </View>
             <View className="flex-row justify-between items-center mt-3">
               <Text className="text-gray-500">2:00 PM - 5:00 PM</Text>
-              <Text className="text-lg font-bold">N120,000</Text>
+              <Text className="text-lg font-bold">$120</Text>
             </View>
           </View>
 
@@ -141,13 +137,13 @@ export default function App() {
             </View>
             <View className="flex-row justify-between items-center mt-3">
               <Text className="text-gray-500">6:00 PM - 8:00 PM</Text>
-              <Text className="text-lg font-bold">N80,000</Text>
+              <Text className="text-lg font-bold">$80</Text>
             </View>
           </View>
         </View>
 
         {/* Quick Actions Section */}
-        {/* <View className="mt-6 px-4 mb-6">
+        <View className="mt-6 px-4 mb-6">
           <Text className="text-xl font-bold mb-4">Quick Actions</Text>
           <View className="flex-row justify-between">
             <TouchableOpacity className="items-center">
@@ -175,9 +171,10 @@ export default function App() {
               <Text className="text-gray-600">Settings</Text>
             </TouchableOpacity>
           </View>
-        </View> */}
-      </ScrollView>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
+
+export default App;

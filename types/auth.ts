@@ -15,7 +15,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export const registerSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
-  phoneNumber: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Please enter a valid phone number"),
+  phoneNumber: z.string().regex(/^\+?[0-9]\d{10,11}$/, "Please enter a valid phone number"),
   password: z.string()
     .min(8, "Password must be at least 8 characters")
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
